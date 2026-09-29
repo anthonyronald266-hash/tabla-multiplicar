@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENATI - Ejercicio 6: Tabla de Multiplicar</title>
+  
+  <style>
+    /* Reset & Estilos Base */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --accent: #8b5cf6;
+      --danger: #ef4444;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Layout principal */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        grid-template-columns: 340px 1fr;
+      }
+    }
+
+    /* Tarjetas */
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+
+    /* Formularios e Inputs */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background-color: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--primary);
+    }
+
+    /* Botones de Acceso Rápido */
+    .quick-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+
+    .btn-quick {
+      background-color: #090d16;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-quick:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Botones de acción */
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    button.btn-main {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    button.btn-main:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: #334155;
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background-color: #475569;
+    }
+
+    /* Mensajes y Alertas */
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      display: none;
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--danger);
+      color: #fca5a5;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    /* Métricas / Estadísticas */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .stat-card {
+      background-color: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: center;
+    }
+
+    .stat-card .title {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .stat-card .val {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-top: 0.2rem;
+      font-family: monospace;
+    }
+
+    /* Tabla de Resultados */
+    .table-container {
+      background-color: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 0.6rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background-color: #162032;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:hover {
+      background-color: rgba(59, 130, 246, 0.08);
+    }
+
+    .tag-par {
+      background-color: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+
+    .tag-impar {
+      background-color: rgba(139, 92, 246, 0.2);
+      color: #c4b5fd;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+
+    .placeholder-text {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .actions-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 1rem;
+    }
+
+    .btn-copy {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.5rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-copy:hover {
+      border-color: var(--primary);
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>SENATI - Algoritmos y Programación</h1>
+    <p>Práctica Dirigida Nivel 1 • Ejercicio 06: Tabla de Multiplicar</p>
+  </header>
+
+  <div class="container">
+    
+    <!-- Panel Izquierdo: Configuración -->
+    <div class="card">
+      <h2>Parámetros de Entrada</h2>
+      <form id="tablaForm" onsubmit="return false;">
+        <div class="form-group">
+          <label for="numInput">Número a Multiplicar:</label>
+          <input type="number" id="numInput" step="any" placeholder="Ej. 7" required>
+        </div>
+
+        <div class="form-group">
+          <label for="limiteSelect">Límite de la Tabla:</label>
+          <select id="limiteSelect">
+            <option value="10" selected>Hasta el 10</option>
+            <option value="12">Hasta el 12</option>
+            <option value="15">Hasta el 15</option>
+            <option value="20">Hasta el 20</option>
+            <option value="50">Hasta el 50</option>
+            <option value="100">Hasta el 100</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Ajustes Rápidos:</label>
+          <div class="quick-buttons">
+            <button type="button" class="btn-quick" onclick="setQuickVal(2)">Tabla del 2</button>
+            <button type="button" class="btn-quick" onclick="setQuickVal(5)">Tabla del 5</button>
+            <button type="button" class="btn-quick" onclick="setQuickVal(7)">Tabla del 7</button>
+            <button type="button" class="btn-quick" onclick="setQuickVal(9)">Tabla del 9</button>
+            <button type="button" class="btn-quick" onclick="setQuickVal(12)">Tabla del 12</button>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="btn-main btn-primary" id="btnGenerar">Generar Tabla</button>
+          <button type="button" class="btn-main btn-secondary" id="btnLimpiar">Limpiar</button>
+        </div>
+      </form>
+
+      <!-- Mensaje de Error -->
+      <div id="alertBox" class="alert"></div>
+    </div>
+
+    <!-- Panel Derecho: Resultados -->
+    <div class="card">
+      <h2>Tabla Generada</h2>
+      
+      <!-- Métricas -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="title">Suma Total</div>
+          <div class="val" id="statSuma">--</div>
+        </div>
+        <div class="stat-card">
+          <div class="title">Promedio</div>
+          <div class="val" id="statProm">--</div>
+        </div>
+        <div class="stat-card">
+          <div class="title">Pares / Impares</div>
+          <div class="val" id="statParidad">--</div>
+        </div>
+      </div>
+
+      <!-- Contenedor de Tabla -->
+      <div class="table-container" id="tableContainer">
+        <div class="placeholder-text" id="placeholder">
+          Ingrese un número y presione "Generar Tabla" para visualizar los resultados.
+        </div>
+        <table id="resultTable" style="display: none;">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Operación</th>
+              <th>Resultado</th>
+              <th>Tipo</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="actions-bar" id="actionsBar" style="display: none;">
+        <button class="btn-copy" id="btnCopiar">📋 Copiar Tabla al Portapapeles</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const numInput = document.getElementById('numInput');
+      const limiteSelect = document.getElementById('limiteSelect');
+      const btnGenerar = document.getElementById('btnGenerar');
+      const btnLimpiar = document.getElementById('btnLimpiar');
+      const btnCopiar = document.getElementById('btnCopiar');
+      const alertBox = document.getElementById('alertBox');
+
+      const placeholder = document.getElementById('placeholder');
+      const resultTable = document.getElementById('resultTable');
+      const tableBody = document.getElementById('tableBody');
+      const actionsBar = document.getElementById('actionsBar');
+
+      const statSuma = document.getElementById('statSuma');
+      const statProm = document.getElementById('statProm');
+      const statParidad = document.getElementById('statParidad');
+
+      let tablaTextoPlano = '';
+
+      // Función para mostrar errores
+      function showError(msg) {
+        if (msg) {
+          alertBox.textContent = msg;
+          alertBox.classList.add('show');
+        } else {
+          alertBox.classList.remove('show');
+        }
+      }
+
+      // Formateador numérico
+      function fmt(num) {
+        if (Number.isInteger(num)) return num.toString();
+        return parseFloat(num.toFixed(4)).toString();
+      }
+
+      // Función global para botones de acceso rápido
+      window.setQuickVal = (val) => {
+        numInput.value = val;
+        generarTabla();
+      };
+
+      // Generar Tabla de Multiplicar
+      function generarTabla() {
+        const val = numInput.value.trim();
+        if (val === '') {
+          showError('Por favor ingrese un número.');
+          return;
+        }
+
+        const num = parseFloat(val);
+        if (isNaN(num)) {
+          showError('Ingrese un valor numérico válido.');
+          return;
+        }
+
+        showError(null);
+
+        const limite = parseInt(limiteSelect.value);
+        tableBody.innerHTML = '';
+        tablaTextoPlano = `TABLA DE MULTIPLICAR DEL ${num}\n---------------------------\n`;
+
+        let sumaTotal = 0;
+        let cantPares = 0;
+        let cantImpares = 0;
+
+        for (let i = 1; i <= limite; i++) {
+          const res = num * i;
+          sumaTotal += res;
+
+          const esEntero = Number.isInteger(res);
+          let esPar = esEntero && res % 2 === 0;
+
+          if (esEntero) {
+            if (esPar) cantPares++;
+            else cantImpares++;
+          }
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="color: var(--text-muted);">${i}</td>
+            <td><strong>${fmt(num)}</strong> × <strong>${i}</strong></td>
+            <td style="color: var(--primary); font-weight: bold;">${fmt(res)}</td>
+            <td>
+              ${esEntero 
+                ? (esPar ? '<span class="tag-par">PAR</span>' : '<span class="tag-impar">IMPAR</span>') 
+                : '<span style="color: var(--text-muted); font-size: 0.75rem;">DECIMAL</span>'}
+            </td>
+          `;
+          tableBody.appendChild(tr);
+
+          tablaTextoPlano += `${fmt(num)} x ${i} = ${fmt(res)}\n`;
+        }
+
+        // Mostrar Tabla y ocultar placeholder
+        placeholder.style.display = 'none';
+        resultTable.style.display = 'table';
+        actionsBar.style.display = 'flex';
+
+        // Actualizar Estadísticas
+        statSuma.textContent = fmt(sumaTotal);
+        statProm.textContent = fmt(sumaTotal / limite);
+        statParidad.textContent = `${cantPares}P / ${cantImpares}I`;
+      }
+
+      // Limpiar Formulario
+      function limpiar() {
+        numInput.value = '';
+        limiteSelect.value = '10';
+        showError(null);
+
+        placeholder.style.display = 'block';
+        resultTable.style.display = 'none';
+        actionsBar.style.display = 'none';
+
+        statSuma.textContent = '--';
+        statProm.textContent = '--';
+        statParidad.textContent = '--';
+
+        numInput.focus();
+      }
+
+      // Copiar Tabla
+      function copiarTabla() {
+        if (!tablaTextoPlano) return;
+        navigator.clipboard.writeText(tablaTextoPlano).then(() => {
+          const originalText = btnCopiar.textContent;
+          btnCopiar.textContent = '✅ ¡Copiado con Éxito!';
+          setTimeout(() => {
+            btnCopiar.textContent = originalText;
+          }, 2000);
+        });
+      }
+
+      // Event Listeners
+      btnGenerar.addEventListener('click', generarTabla);
+      btnLimpiar.addEventListener('click', limpiar);
+      btnCopiar.addEventListener('click', copiarTabla);
+
+      numInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') generarTabla();
+      });
+    });
+  </script>
+</body>
+</html>
